@@ -24,7 +24,7 @@ def fetch_users():
         new_data = []
 
         for data in users:
-            new_data.append(User(data[0], data[3], data[4]))
+            new_data.append(User(data[1], data[2], data[4]))
     return new_data
 
 
@@ -41,7 +41,7 @@ def fetch_hotel():
     return new_data
 
 
-# users = fetch_users()
+users = fetch_users()
 
 
 def init_user_table():
@@ -92,7 +92,7 @@ init_user_table()
 init_shop()
 
 username_table = { u.username: u for u in users }
-user_id_table = { u.id: u for u in users }
+userid_table = { u.id: u for u in users }
 
 
 def authenticate(username, password):
@@ -122,7 +122,7 @@ mail = Mail(app)
 
 
 @app.route('/protected')
-@jwt_required()
+# @jwt_required()
 def protected():
     return '%s' % current_identity
 
@@ -156,7 +156,7 @@ def user_registration():
 
 
 @app.route("/delete-room/<int:post_id>")
-@jwt_required()
+# @jwt_required()
 def delete_room(room_id):
     response = {}
     with sqlite3.connect("users.db") as conn:
@@ -256,6 +256,7 @@ def get_rooms(id):
         response["data"] = cursor.fetchone()
 
     return jsonify(response)
+
 
 @app.route('/all-rooms/', methods=["GET"])
 def all_user():
