@@ -57,9 +57,9 @@ def init_user_table():
     conn.close()
 
 
-def init_shop():
+def init_hotel():
     with sqlite3.connect('users.db') as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS shop (id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        conn.execute("CREATE TABLE IF NOT EXISTS hotel (id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "room_name TEXT NOT NULL,"
                      "room_type TEXT NOT NULL,"
                      "price TEXT NOT NULL,"
@@ -89,10 +89,10 @@ def fetch_rooms():
 
 
 init_user_table()
-init_shop()
+init_hotel()
 
-username_table = { u.username: u for u in users }
-userid_table = { u.id: u for u in users }
+username_table = {u.username: u for u in users}
+userid_table = {u.id: u for u in users}
 
 
 def authenticate(username, password):
@@ -103,36 +103,37 @@ def authenticate(username, password):
 
 def identity(payload):
     user_id = payload['identity']
-    return user_id_table.get(user_id, None)
+    return userid_table.get(user_id, None)
 
 
 app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'super-secret'
-app.config['MAIL_SERVER'] ='smtp.gmail.com'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'kiyaamudienkhan@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Khanget47'
+app.config['MAIL_PASSWORD'] = 'Khanget69'
 app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 # app.config['MAIL_USE_SSL'] = Truejwt = JWT(app, authenticate, identity)
 CORS(app)
-mail = Mail(app)
+
 
 # jwt = JWT(app, authenticate, identity)
 
 
-@app.route('/protected')
-# @jwt_required()
-def protected():
-    return '%s' % current_identity
+# @app.route('/protected')
+# # @jwt_required()
+# def protected():
+#     return '%s' % current_identity
 
 
 @app.route('/user-registration/', methods=["POST"])
 def user_registration():
+    mail = Mail(app)
     response = {}
 
     if request.method == "POST":
-
         username = request.form['username']
         last_name = request.form['last_name']
         email = request.form['email']
@@ -278,7 +279,6 @@ def rooms():
     response = {}
 
     if request.method == "POST":
-
         room_name = request.form['room_name']
         room_type = request.form['room_type']
         price = request.form['price']
