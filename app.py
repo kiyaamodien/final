@@ -63,16 +63,16 @@ def init_hotel():
                      "room_name TEXT NOT NULL,"
                      "room_type TEXT NOT NULL,"
                      "price TEXT NOT NULL,"
-                     "room_size TEXT NOT NULL)")
+                     "room_view TEXT NOT NULL)")
     print("room table created successfully.")
 
 
 class Booking(object):
-    def __init__(self, room_name, room_type, price, room_size):
+    def __init__(self, room_name, room_type, price, room_view):
         self.room_name = room_name
         self.room_type = room_type
         self.price = price
-        self.room_size = room_size
+        self.room_view = room_view
 
 
 def fetch_rooms():
@@ -95,15 +95,15 @@ username_table = {u.username: u for u in users}
 userid_table = {u.id: u for u in users}
 
 
-def authenticate(username, password):
-    user = username_table.get(username, None)
-    if user and hmac.compare_digest(user.password.encode('utf-8'), password.encode('utf-8')):
-        return user
-
-
-def identity(payload):
-    user_id = payload['identity']
-    return userid_table.get(user_id, None)
+# def authenticate(username, password):
+#     user = username_table.get(username, None)
+#     if user and hmac.compare_digest(user.password.encode('utf-8'), password.encode('utf-8')):
+#         return user
+#
+#
+# def identity(payload):
+#     user_id = payload['identity']
+#     return userid_table.get(user_id, None)
 
 
 app = Flask(__name__)
@@ -155,6 +155,26 @@ def user_registration():
             mail.send(msg)
         return response
 
+    def dict_factory(cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+
+    if request.method == "PATCH":
+        email = request.json["email"]
+        password = request.json["password"]
+
+        with sqlite3.connect("users.db") as conn:
+            conn.row_factory = dict_factory
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM user WHERE email=? AND passsword=?", (email, password,))
+            user = cursor.fetchone()
+
+        response["status_code"] = 200
+        response["data"] = user
+        return response
+
 
 @app.route("/delete-room/<int:post_id>")
 # @jwt_required()
@@ -203,26 +223,26 @@ def edit_booking(room_id):
                     incoming_data = dict(request.json)
                     put_data = {}
 
-                    if incoming_data.get("room_size") is not None:
-                        put_data["room_size"] = incoming_data.get("room_size")
+                    if incoming_data.get("room_view") is not None:
+                        put_data["room_view"] = incoming_data.get("room_view")
                         with sqlite3.connect('users.db') as conn:
                             cursor = conn.cursor()
-                            cursor.execute("UPDATE hotel SET room_size =? WHERE id=?",
-                                           (put_data["room_size"], room_id))
+                            cursor.execute("UPDATE hotel SET room_view =? WHERE id=?",
+                                           (put_data["room_view"], room_id))
                             conn.commit()
                             response['message'] = "Update was successfully added"
                             response['status_code'] = 200
                         return response
-                    if incoming_data.get("room_size") is not None:
-                        put_data['room_size'] = incoming_data.get('content')
+                    if incoming_data.get("room_view") is not None:
+                        put_data['room_view'] = incoming_data.get('content')
 
                         with sqlite3.connect('users.db') as conn:
                             cursor = conn.cursor()
-                            cursor.execute("UPDATE hotel SET room_size =? WHERE id=?",
-                                           (put_data["room_size"], room_id))
+                            cursor.execute("UPDATE hotel SET room_view =? WHERE id=?",
+                                           (put_data["room_view"], room_id))
                             conn.commit()
 
-                            response["room_size"] = "Booking updated successfully"
+                            response["room_view"] = "Booking updated successfully"
                             response["status_code"] = 200
                         return response
             return response
@@ -253,7 +273,7 @@ def get_rooms(id):
         cursor.execute("SELECT * FROM hotel WHERE id=" + str(id))
 
         response["status_code"] = 200
-        response["description"] = "users retrieved successfully"
+        response["description"] = "rooms retrieved successfully"
         response["data"] = cursor.fetchone()
 
     return jsonify(response)
@@ -268,7 +288,7 @@ def all_user():
         cursor.execute("SELECT * FROM hotel")
 
         response["status_code"] = 200
-        response["description"] = "users retrieved successfully"
+        response["description"] = "rooms retrieved successfully"
         response["data"] = cursor.fetchall()
 
     return response
@@ -282,7 +302,7 @@ def rooms():
         room_name = request.form['room_name']
         room_type = request.form['room_type']
         price = request.form['price']
-        room_size = request.form['room_size']
+        room_view = request.form['room_view']
 
         with sqlite3.connect("users.db") as conn:
             cursor = conn.cursor()
@@ -290,7 +310,7 @@ def rooms():
                            "room_name,"
                            "room_type,"
                            "price,"
-                           "room_size) VALUES(?, ?, ?, ?)", (room_name, room_type, price, room_size))
+                           "room_view) VALUES(?, ?, ?, ?)", (room_name, room_type, price, room_view))
             conn.commit()
             response["message"] = "success"
             response["status_code"] = 201
