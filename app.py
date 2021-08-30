@@ -2,10 +2,8 @@ import hmac
 import sqlite3
 import datetime
 from flask import Flask, request, jsonify
-# from flask_jwt import JWT, jwt_required, current_identity
 from flask_mail import Mail, Message
 from flask_cors import CORS
-from flask import render_template, flash, redirect
 
 
 class User(object):
@@ -175,14 +173,28 @@ def user_registration():
         response["data"] = user
         return response
 
+    @app.route('/all-users/', methods=["GET"])
+    def all_user():
+        response = {}
 
-@app.route("/delete-room/<int:post_id>")
+        with sqlite3.connect("users.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM user")
+
+            response["status_code"] = 200
+            response["description"] = "users retrieved successfully"
+            response["data"] = cursor.fetchall()
+
+        return response
+
+
+@app.route("/delete-room/<int:users_id>")
 # @jwt_required()
-def delete_room(room_id):
+def delete_room(users_id):
     response = {}
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM hotel WHERE id=" + str(room_id))
+        cursor.execute("DELETE FROM hotel WHERE id=" + str(users_id))
         conn.commit()
         response['status_code'] = 200
         response['message'] = "users room deleted successfully."
@@ -249,13 +261,13 @@ def edit_booking(room_id):
     return response
 
 
-@app.route('/get-user/<int:post_id>/', methods=["GET"])
-def get_user(post_id):
+@app.route('/get-user/<int:users_id>/', methods=["GET"])
+def get_user(users_id):
     response = {}
 
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM hotel WHERE id=" + str(post_id))
+        cursor.execute("SELECT * FROM hotel WHERE id=" + str(users_id))
 
         response["status_code"] = 200
         response["description"] = "users retrieved successfully"
