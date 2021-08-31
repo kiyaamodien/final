@@ -93,6 +93,12 @@ username_table = {u.username: u for u in users}
 userid_table = {u.id: u for u in users}
 
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 # def authenticate(username, password):
 #     user = username_table.get(username, None)
 #     if user and hmac.compare_digest(user.password.encode('utf-8'), password.encode('utf-8')):
@@ -153,12 +159,10 @@ def user_registration():
             mail.send(msg)
         return response
 
-    def dict_factory(cursor, row):
-        d = {}
-        for idx, col in enumerate(cursor.description):
-            d[col[0]] = row[idx]
-        return d
 
+@app.route('/login/', methods=['PATCH'])
+def login():
+    response = {}
     if request.method == "PATCH":
         email = request.json["email"]
         password = request.json["password"]
@@ -173,19 +177,20 @@ def user_registration():
         response["data"] = user
         return response
 
-    @app.route('/all-users/', methods=["GET"])
-    def all_user():
-        response = {}
 
-        with sqlite3.connect("users.db") as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM user")
+@app.route('/all-users/', methods=["GET"])
+def all_user():
+    response = {}
 
-            response["status_code"] = 200
-            response["description"] = "users retrieved successfully"
-            response["data"] = cursor.fetchall()
+    with sqlite3.connect("users.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM user")
 
-        return response
+        response["status_code"] = 200
+        response["description"] = "users retrieved successfully"
+        response["data"] = cursor.fetchall()
+
+    return response
 
 
 @app.route("/delete-room/<int:users_id>")
@@ -267,13 +272,42 @@ def get_user(users_id):
 
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM hotel WHERE id=" + str(users_id))
+        cursor.execute("SELECT * FROM user WHERE user_id=" + str(users_id))
 
         response["status_code"] = 200
         response["description"] = "users retrieved successfully"
         response["data"] = cursor.fetchone()
 
     return jsonify(response)
+
+
+@app.route('/all-users/', methods=["GET"])
+def all_user():
+    response = {}
+
+    with sqlite3.connect("users.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM user")
+
+        response["status_code"] = 200
+        response["description"] = "users retrieved successfully"
+        response["data"] = cursor.fetchall()
+
+    return response
+
+# @app.route('/all-users/', methods=["GET"])
+# def all_user():
+#     response = {}
+#
+#     with sqlite3.connect("users.db") as conn:
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT * FROM user")
+#
+#         response["status_code"] = 200
+#         response["description"] = "users retrieved successfully"
+#         response["data"] = cursor.fetchall()
+#
+#     return response
 
 
 @app.route('/get-rooms/<int:id>/', methods=["GET"])
@@ -292,12 +326,12 @@ def get_rooms(id):
 
 
 @app.route('/all-rooms/', methods=["GET"])
-def all_user():
+def all_room():
     response = {}
 
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM hotel")
+        cursor.execute("SELECT * FROM user")
 
         response["status_code"] = 200
         response["description"] = "rooms retrieved successfully"
