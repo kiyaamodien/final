@@ -281,19 +281,19 @@ def get_user(users_id):
     return jsonify(response)
 
 
-@app.route('/all-users/', methods=["GET"])
-def all_user():
-    response = {}
-
-    with sqlite3.connect("users.db") as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM user")
-
-        response["status_code"] = 200
-        response["description"] = "users retrieved successfully"
-        response["data"] = cursor.fetchall()
-
-    return response
+# @app.route('/all-users/', methods=["GET"])
+# def all_user():
+#     response = {}
+#
+#     with sqlite3.connect("users.db") as conn:
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT * FROM user")
+#
+#         response["status_code"] = 200
+#         response["description"] = "users retrieved successfully"
+#         response["data"] = cursor.fetchall()
+#
+#     return response
 
 # @app.route('/all-users/', methods=["GET"])
 # def all_user():
