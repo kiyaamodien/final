@@ -164,14 +164,16 @@ def user_registration():
 def login():
     response = {}
     if request.method == "PATCH":
-        email = request.json["email"]
-        password = request.json["password"]
-        print(email, password)
+        emailaddress = request.json['email']
+        # email = request.json["email"]
+        passw = request.json['password']
+        # password = request.json["password"]
+        # print(email, password)
 
         with sqlite3.connect("users.db") as conn:
             conn.row_factory = dict_factory
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM user WHERE email=? AND password=?", (email, password,))
+            cursor.execute("SELECT * FROM user WHERE email=? AND password=?", (emailaddress, passw))
             user = cursor.fetchone()
 
         response["status_code"] = 200
