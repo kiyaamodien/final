@@ -170,7 +170,7 @@ def login():
         with sqlite3.connect("users.db") as conn:
             conn.row_factory = dict_factory
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM user WHERE email=? AND passsword=?", (email, password,))
+            cursor.execute("SELECT * FROM user WHERE email=? AND password=?", (email, password,))
             user = cursor.fetchone()
 
         response["status_code"] = 200
@@ -279,35 +279,6 @@ def get_user(users_id):
         response["data"] = cursor.fetchone()
 
     return jsonify(response)
-
-
-# @app.route('/all-users/', methods=["GET"])
-# def all_user():
-#     response = {}
-#
-#     with sqlite3.connect("users.db") as conn:
-#         cursor = conn.cursor()
-#         cursor.execute("SELECT * FROM user")
-#
-#         response["status_code"] = 200
-#         response["description"] = "users retrieved successfully"
-#         response["data"] = cursor.fetchall()
-#
-#     return response
-
-# @app.route('/all-users/', methods=["GET"])
-# def all_user():
-#     response = {}
-#
-#     with sqlite3.connect("users.db") as conn:
-#         cursor = conn.cursor()
-#         cursor.execute("SELECT * FROM user")
-#
-#         response["status_code"] = 200
-#         response["description"] = "users retrieved successfully"
-#         response["data"] = cursor.fetchall()
-#
-#     return response
 
 
 @app.route('/get-rooms/<int:id>/', methods=["GET"])
