@@ -138,10 +138,10 @@ def user_registration():
     response = {}
 
     if request.method == "POST":
-        username = request.json['username']
-        last_name = request.json['last_name']
-        email = request.json['email']
-        password = request.json['password']
+        susername = request.json['username']
+        slast_name = request.json['last_name']
+        semail = request.json['email']
+        spassword = request.json['password']
 
         with sqlite3.connect("users.db") as conn:
             cursor = conn.cursor()
@@ -149,7 +149,7 @@ def user_registration():
                            "username,"
                            "last_name,"
                            "email,"
-                           "password) VALUES(?, ?, ?, ?)", (username, last_name, email, password))
+                           "password) VALUES(?, ?, ?, ?)", (susername, slast_name, semail, spassword))
             conn.commit()
             response["message"] = "success"
             response["status_code"] = 201
