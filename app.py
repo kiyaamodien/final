@@ -143,6 +143,7 @@ def user_registration():
         semail = request.json['email']
         spassword = request.json['password']
 
+
         with sqlite3.connect("users.db") as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO user("
@@ -314,9 +315,19 @@ def all_room():
     return response
 
 
-@app.route('/rooms/', methods=["POST"])
+@app.route('/rooms/', methods=["POST", "GET"])
 def rooms():
     response = {}
+    if request.method == "GET":
+        with sqlite3.connect("users.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM hotel")
+            data = cursor.fetchall()
+            response["message"] = "success"
+            response["status_code"] = 201
+            response['data'] = data
+        return response
+
 
     if request.method == "POST":
         room_name = request.form['room_name']
