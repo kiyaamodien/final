@@ -328,7 +328,6 @@ def rooms():
             response['data'] = data
         return response
 
-
     if request.method == "POST":
         room_name = request.form['room_name']
         room_type = request.form['room_type']
