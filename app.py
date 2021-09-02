@@ -134,7 +134,7 @@ CORS(app)
 
 @app.route('/user-registration/', methods=["POST"])
 def user_registration():
-    mail = Mail(app)
+    # mail = Mail(app)
     response = {}
 
     if request.method == "POST":
@@ -153,10 +153,10 @@ def user_registration():
             conn.commit()
             response["message"] = "success"
             response["status_code"] = 201
-            msg = Message('Hello Message', sender='kiyaamudienkhan@gmail.com',
-                          recipients=[email])
-            msg.body = 'My email using Flask'
-            mail.send(msg)
+            # msg = Message('Hello Message', sender='kiyaamudienkhan@gmail.com',
+            #               recipients=[email])
+            # msg.body = 'My email using Flask'
+            # mail.send(msg)
         return response
 
 
