@@ -60,6 +60,7 @@ def init_hotel():
         conn.execute("CREATE TABLE IF NOT EXISTS hotel (id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "room_name TEXT NOT NULL,"
                      "room_type TEXT NOT NULL,"
+                     "room_image TEXT NOT NULL,"
                      "price TEXT NOT NULL,"
                      "room_view TEXT NOT NULL)")
     print("room table created successfully.")
@@ -199,11 +200,11 @@ def all_user():
 
 @app.route("/delete-room/<int:room_id>")
 # @jwt_required()
-def delete_room(users_id):
+def delete_room(room_id):
     response = {}
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM hotel WHERE id=" + str(users_id))
+        cursor.execute("DELETE FROM hotel WHERE id=" + str(room_id))
         conn.commit()
         response['status_code'] = 200
         response['message'] = "room deleted successfully."
