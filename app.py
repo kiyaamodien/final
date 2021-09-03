@@ -340,6 +340,7 @@ def rooms():
             cursor.execute("INSERT INTO hotel("
                            "room_name,"
                            "room_type,"
+                           "room_image,"
                            "price,"
                            "room_view) VALUES(?, ?, ?, ?)", (room_name, room_type, room_image, price, room_view))
             conn.commit()
