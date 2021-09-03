@@ -307,7 +307,7 @@ def all_room():
 
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM user")
+        cursor.execute("SELECT * FROM hotel")
 
         response["status_code"] = 200
         response["description"] = "rooms retrieved successfully"
