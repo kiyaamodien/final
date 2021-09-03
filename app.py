@@ -4,6 +4,8 @@ import datetime
 from flask import Flask, request, jsonify
 from flask_mail import Mail, Message
 from flask_cors import CORS
+import cloudinary
+import cloudinary.uploader
 
 
 class User(object):
@@ -11,6 +13,20 @@ class User(object):
         self.id = id
         self.username = username
         self.password = password
+
+
+def upload_file():
+    app.logger.info('in upload route')
+    cloudinary.config(cloud_name ='dlqxdivje', api_key='599819111725767',
+                      api_secret='lTD-aqaoTbzVgmZqyZxjPThyaVg')
+    upload_result = None
+    if request.method == 'POST' or request.method == 'PUT':
+        roomimage = request.files['room_image']
+        app.logger.info('%s file_to_upload', roomimage)
+        if roomimage:
+            upload_result = cloudinary.uploader.upload(roomimage)
+            app.logger.info(upload_result)
+            return upload_result['url']
 
 
 def fetch_users():
@@ -332,7 +348,7 @@ def rooms():
     if request.method == "POST":
         room_name = request.form['room_name']
         room_type = request.form['room_type']
-        room_image = request.form['room_image']
+        room_image = request.files['room_image']
         price = request.form['price']
         room_view = request.form['room_view']
 
@@ -343,7 +359,7 @@ def rooms():
                            "room_type,"
                            "room_image,"
                            "price,"
-                           "room_view) VALUES(?, ?, ?, ?)", (room_name, room_type, room_image, price, room_view))
+                           "room_view) VALUES(?, ?, ?, ?, ?)", (room_name, room_type, upload_file(), price, room_view))
             conn.commit()
             response["message"] = "success"
             response["status_code"] = 201
