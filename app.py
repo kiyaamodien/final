@@ -197,7 +197,7 @@ def all_user():
     return response
 
 
-@app.route("/delete-room/<int:users_id>")
+@app.route("/delete-room/<int:room_id>")
 # @jwt_required()
 def delete_room(users_id):
     response = {}
@@ -206,7 +206,7 @@ def delete_room(users_id):
         cursor.execute("DELETE FROM hotel WHERE id=" + str(users_id))
         conn.commit()
         response['status_code'] = 200
-        response['message'] = "users room deleted successfully."
+        response['message'] = "room deleted successfully."
     return response
 
 
@@ -331,6 +331,7 @@ def rooms():
     if request.method == "POST":
         room_name = request.form['room_name']
         room_type = request.form['room_type']
+        room_image = request.form['room_image']
         price = request.form['price']
         room_view = request.form['room_view']
 
@@ -340,7 +341,7 @@ def rooms():
                            "room_name,"
                            "room_type,"
                            "price,"
-                           "room_view) VALUES(?, ?, ?, ?)", (room_name, room_type, price, room_view))
+                           "room_view) VALUES(?, ?, ?, ?)", (room_name, room_type, room_image, price, room_view))
             conn.commit()
             response["message"] = "success"
             response["status_code"] = 201
