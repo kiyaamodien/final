@@ -1,8 +1,5 @@
-import hmac
 import sqlite3
-import datetime
 from flask import Flask, request, jsonify
-from flask_mail import Mail, Message
 from flask_cors import CORS
 import cloudinary
 import cloudinary.uploader
@@ -116,15 +113,6 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
-# def authenticate(username, password):
-#     user = username_table.get(username, None)
-#     if user and hmac.compare_digest(user.password.encode('utf-8'), password.encode('utf-8')):
-#         return user
-#
-#
-# def identity(payload):
-#     user_id = payload['identity']
-#     return userid_table.get(user_id, None)
 
 
 app = Flask(__name__)
@@ -136,22 +124,11 @@ app.config['MAIL_USERNAME'] = 'kiyaamudienkhan@gmail.com'
 app.config['MAIL_PASSWORD'] = 'Khanget69'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-# app.config['MAIL_USE_SSL'] = Truejwt = JWT(app, authenticate, identity)
 CORS(app)
-
-
-# jwt = JWT(app, authenticate, identity)
-
-
-# @app.route('/protected')
-# # @jwt_required()
-# def protected():
-#     return '%s' % current_identity
 
 
 @app.route('/user-registration/', methods=["POST"])
 def user_registration():
-    # mail = Mail(app)
     response = {}
 
     if request.method == "POST":
@@ -171,10 +148,6 @@ def user_registration():
             conn.commit()
             response["message"] = "success"
             response["status_code"] = 201
-            # msg = Message('Hello Message', sender='kiyaamudienkhan@gmail.com',
-            #               recipients=[email])
-            # msg.body = 'My email using Flask'
-            # mail.send(msg)
         return response
 
 
@@ -215,7 +188,6 @@ def all_user():
 
 
 @app.route("/delete-room/<int:room_id>")
-# @jwt_required()
 def delete_room(room_id):
     response = {}
     with sqlite3.connect("users.db") as conn:
